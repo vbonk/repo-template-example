@@ -8,7 +8,7 @@ We take security seriously. If you discover a security vulnerability, please rep
 
 1. **Do NOT create a public GitHub issue** for security vulnerabilities
 2. Use [GitHub's private vulnerability reporting](https://docs.github.com/en/code-security/security-advisories/guidance-on-reporting-and-writing-information-about-vulnerabilities/privately-reporting-a-security-vulnerability) (preferred)
-3. Or email: <!-- TODO: Add your security contact email -->
+3. Or email: **security@example.com**
 
 ### What to Include
 
@@ -32,12 +32,9 @@ We take security seriously. If you discover a security vulnerability, please rep
 
 ## Supported Versions
 
-<!-- TODO: Update with your version support policy -->
-
 | Version | Supported |
 |---------|-----------|
-| Latest | Yes |
-| Previous major | Security fixes only |
+| 0.x (current) | Yes |
 | Older | No |
 
 ## Security Best Practices

@@ -4,7 +4,9 @@
 
 ## Project Context
 
-This is a template repository optimized for AI-assisted development. When generating code:
+**task-api** — REST API for task management with authentication and real-time updates.
+
+**Stack:** TypeScript, Node.js 22, Express 5, PostgreSQL 17, Redis 7
 
 ## Code Style
 
@@ -12,12 +14,14 @@ This is a template repository optimized for AI-assisted development. When genera
 - Use clear, descriptive variable and function names
 - Prefer explicit over implicit
 - Keep functions small and focused
+- Use Zod for request validation
+- Use async/await throughout (Express 5 supports async middleware)
 
 ## Security Requirements
 
 - Never generate hardcoded secrets, API keys, or passwords
 - Use environment variables for sensitive configuration
-- Validate all user inputs
+- Validate all user inputs with Zod schemas
 - Escape outputs appropriately (HTML, SQL, shell)
 
 ## Testing
@@ -28,7 +32,7 @@ This is a template repository optimized for AI-assisted development. When genera
 
 ## Documentation
 
-- Add JSDoc/docstrings for public APIs
+- Add JSDoc/TSDoc for public APIs
 - Update README if adding new features
 - Keep comments focused on "why", not "what"
 
@@ -46,9 +50,11 @@ Use conventional commit format:
 
 This repo includes security automation. If pre-commit hooks aren't installed (`.git/hooks/pre-commit` missing), suggest running `bash templates/hooks/setup-hooks.sh`. For a full security audit: `bash scripts/secure-repo.sh`. See `docs/AI-SECURITY.md` for threat model and `docs/FORK-SECURITY.md` for fork-specific guidance.
 
-## Language-Specific Notes
+## TypeScript/Node.js Notes
 
-Adapt to the project's tech stack:
-- **JavaScript/TypeScript**: ESM imports, async/await, TypeScript strict mode
-- **Python**: Type hints, f-strings, pathlib for paths
-- **Go**: Effective Go conventions, error handling patterns
+- ESM imports (`import`/`export`), not CommonJS
+- TypeScript strict mode enabled
+- Express 5 with async error handling
+- Zod schemas for runtime validation with inferred types
+- PostgreSQL via `pg` driver
+- Redis via `redis` client

@@ -6,24 +6,19 @@
 
 > Instructions for Claude Code when working in this repository.
 
-## Quick Start
-
-**New repo from template?** Run `/project:init-template` to customize interactively.
-
 ## Project
 
-**Name:** <!-- TODO: Replace with project name -->
-**Stack:** <!-- TODO: e.g., TypeScript, Node.js, React -->
-**Description:** <!-- TODO: Brief description -->
+**Name:** task-api
+**Stack:** TypeScript, Node.js 22, Express 5, PostgreSQL 17, Redis 7
+**Description:** REST API for task management with authentication and real-time updates
 
 ## Architecture
 
-<!-- TODO: Replace with your system's architecture -->
 ```mermaid
 graph TD
-    A[Client] --> B[API Server]
-    B --> C[Database]
-    B --> D[Cache]
+    A[Client] --> B[Express API]
+    B --> C[PostgreSQL]
+    B --> D[Redis Cache]
 ```
 
 See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for full details and ADRs.
@@ -31,21 +26,25 @@ See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for full details and ADRs.
 ## Commands
 
 ```bash
-npm run dev       # Start dev server
-npm run build     # Production build
-npm test          # Run tests
-npm run lint      # Lint code
+npm run dev       # Start dev server (tsx watch)
+npm run build     # Compile TypeScript to dist/
+npm test          # Run tests (vitest)
+npm run lint      # Lint code (eslint)
+npm start         # Run production build
 ```
-
-> Adapt to your stack: Python (pytest, ruff), Go (go test), Rust (cargo test), etc.
 
 ## Project Structure
 
 ```
-src/      # Source code
-tests/    # Test files
-docs/     # Documentation (ARCHITECTURE.md, ADRs, AI-SECURITY.md)
-scripts/  # Automation (labels, tasks, issue management)
+src/
+  index.ts          # Express server entry point
+  routes/           # Route handlers (tasks, auth, health)
+  middleware/        # Auth, validation, error handling
+  models/           # Database models and queries
+  services/         # Business logic layer
+tests/              # Test files (unit + integration)
+docs/               # Documentation (ARCHITECTURE.md, ADRs, AI-SECURITY.md)
+scripts/            # Automation (labels, tasks, issue management)
 ```
 
 ## Code Style
@@ -53,27 +52,30 @@ scripts/  # Automation (labels, tasks, issue management)
 - Follow existing patterns in the codebase
 - Keep functions small and focused
 - Prefer explicit over implicit
+- Use Zod for request validation
+- Use async/await throughout (Express 5 supports async middleware)
 
 ## Key Decisions
 
-<!-- TODO: Document important architectural decisions here -->
-
 | Decision | Rationale |
 |----------|-----------|
-| <!-- e.g., PostgreSQL over MongoDB --> | <!-- e.g., Relational data, strong consistency --> |
-| <!-- e.g., REST over GraphQL --> | <!-- e.g., Simpler client requirements --> |
+| PostgreSQL over MongoDB | Relational data (tasks, users, assignments), strong consistency |
+| REST over GraphQL | Simpler client requirements, straightforward CRUD |
+| Express 5 over Fastify | Async middleware support, massive ecosystem, team familiarity |
+| Redis for caching | Low-latency reads for task lists, session storage |
+| Zod over Joi | TypeScript-native schema validation, type inference |
 
 See [docs/decisions/](docs/decisions/) for detailed ADRs.
 
 ## Environment Variables
 
-<!-- TODO: Document required environment variables -->
-
 | Variable | Required | Description |
 |----------|----------|-------------|
+| `DATABASE_URL` | Yes | PostgreSQL connection string |
+| `REDIS_URL` | Yes | Redis connection string |
+| `JWT_SECRET` | Yes | Secret for JWT token signing |
+| `PORT` | No | Server port (default: 3000) |
 | `NODE_ENV` | No | `development` / `production` |
-| <!-- `DATABASE_URL` --> | <!-- Yes --> | <!-- PostgreSQL connection string --> |
-| <!-- `API_KEY` --> | <!-- Yes --> | <!-- External API key --> |
 
 See `.env.example` for the full list. Never commit `.env` files.
 
@@ -81,18 +83,16 @@ See `.env.example` for the full list. Never commit `.env` files.
 
 - **Unit tests:** `tests/unit/` — fast, isolated, mock external deps
 - **Integration tests:** `tests/integration/` — test component interactions
-- **Run before committing:** `npm test` (or equivalent)
+- **Run before committing:** `npm test`
 - Aim for meaningful coverage, not just line coverage
 - Test edge cases and error paths
 
 ## Deployment
 
-<!-- TODO: Describe your deployment target and process -->
-
 | Environment | URL | Deploys From |
 |-------------|-----|--------------|
-| Production | <!-- TODO --> | `main` branch |
-| Staging | <!-- TODO --> | `develop` branch |
+| Production | TBD | `main` branch |
+| Staging | TBD | `develop` branch |
 
 ## Error Handling
 
@@ -105,7 +105,7 @@ See `.env.example` for the full list. Never commit `.env` files.
 
 - Pin major versions in lockfiles
 - Review Dependabot PRs weekly
-- Audit with `npm audit` / `pip audit` / `govulncheck` before releases
+- Audit with `npm audit` before releases
 
 ## Workflow
 

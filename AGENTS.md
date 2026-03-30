@@ -3,32 +3,20 @@
 > Cross-agent instructions for AI coding assistants.
 > This file is recognized by multiple AI tools including Claude Code, Cursor, Gemini, Codex, and others.
 
-## Template Initialization
-
-**New repo from template?** Help the user customize by:
-1. Asking for project name, description, and tech stack
-2. Updating CLAUDE.md, AGENTS.md, README.md with their answers
-3. Uncommenting the relevant language section in `.github/workflows/ci.yml`
-4. Uncommenting the relevant ecosystem in `.github/dependabot.yml`
-5. Adding security contact to SECURITY.md
-
-See `.claude/commands/init-template.md` for detailed steps.
-
 ## Project Overview
 
-**Project Name:** <!-- TODO: Replace with project name -->
-**Stack:** <!-- TODO: e.g., TypeScript, Node.js, React -->
+**Project Name:** task-api
+**Stack:** TypeScript, Node.js 22, Express 5, PostgreSQL 17, Redis 7
 
-<!-- TODO: Brief description of the project -->
+REST API for task management with authentication and real-time updates.
 
 ## Architecture
 
-<!-- TODO: Replace with your system's architecture -->
 ```mermaid
 graph TD
-    A[Client] --> B[API Server]
-    B --> C[Database]
-    B --> D[Cache]
+    A[Client] --> B[Express API]
+    B --> C[PostgreSQL]
+    B --> D[Redis Cache]
 ```
 
 See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for full details.
@@ -37,35 +25,41 @@ See [docs/decisions/](docs/decisions/) for Architecture Decision Records (ADRs).
 ## Repository Structure
 
 ```
-├── src/             # Source code
-├── tests/           # Test files
-├── docs/            # Documentation (ARCHITECTURE.md, ADRs, AI-SECURITY.md)
-├── scripts/         # Automation scripts (labels, tasks, issue management)
-├── templates/       # Linting, hooks, coverage, tooling templates
-├── .github/         # Workflows, issue templates, CODEOWNERS, Dependabot
-├── .claude/         # Claude Code commands and hook templates
-├── .devcontainer/   # GitHub Codespaces / devcontainer configuration
-└── .vscode/         # VS Code workspace settings
+├── src/
+│   ├── index.ts        # Express server entry point
+│   ├── routes/         # Route handlers (tasks, auth, health)
+│   ├── middleware/      # Auth, validation, error handling
+│   ├── models/         # Database models and queries
+│   └── services/       # Business logic layer
+├── tests/              # Test files (unit + integration)
+├── docs/               # Documentation (ARCHITECTURE.md, ADRs, AI-SECURITY.md)
+├── scripts/            # Automation scripts (labels, tasks, issue management)
+├── templates/          # Linting, hooks, coverage, tooling templates
+├── .github/            # Workflows, issue templates, CODEOWNERS, Dependabot
+├── .claude/            # Claude Code commands and hook templates
+├── .devcontainer/      # GitHub Codespaces / devcontainer configuration
+└── .vscode/            # VS Code workspace settings
 ```
 
 ## Commands
 
 | Command | Description |
 |---------|-------------|
-| `npm run dev` | Start development server |
-| `npm run build` | Production build |
-| `npm test` | Run tests |
-| `npm run lint` | Lint and format code |
-
-> Adapt commands to your tech stack (Python: pytest, ruff; Go: go test, go build; Rust: cargo test, cargo clippy)
+| `npm run dev` | Start development server (tsx watch) |
+| `npm run build` | Compile TypeScript to dist/ |
+| `npm test` | Run tests (vitest) |
+| `npm run lint` | Lint and format code (eslint) |
+| `npm start` | Run production build |
 
 ## Key Decisions
 
-<!-- TODO: Document important architectural decisions -->
-
 | Decision | Rationale |
 |----------|-----------|
-| <!-- e.g., PostgreSQL over MongoDB --> | <!-- e.g., Relational data, strong consistency --> |
+| PostgreSQL over MongoDB | Relational data (tasks, users), strong consistency |
+| REST over GraphQL | Simpler client requirements, straightforward CRUD |
+| Express 5 over Fastify | Async middleware support, massive ecosystem |
+| Redis for caching | Low-latency reads, session storage |
+| Zod for validation | TypeScript-native schema validation with type inference |
 
 See [docs/decisions/](docs/decisions/) for full ADRs.
 
@@ -75,8 +69,11 @@ See `.env.example` for the full list. Never commit `.env` files.
 
 | Variable | Required | Description |
 |----------|----------|-------------|
+| `DATABASE_URL` | Yes | PostgreSQL connection string |
+| `REDIS_URL` | Yes | Redis connection string |
+| `JWT_SECRET` | Yes | Secret for JWT token signing |
+| `PORT` | No | Server port (default: 3000) |
 | `NODE_ENV` | No | `development` / `production` |
-| <!-- `DATABASE_URL` --> | <!-- Yes --> | <!-- Connection string --> |
 
 ## Code Conventions
 
@@ -85,6 +82,8 @@ See `.env.example` for the full list. Never commit `.env` files.
 - Include tests for new functionality
 - Keep functions focused and small
 - Handle errors explicitly — never swallow them
+- Use Zod for request validation
+- Use async/await throughout
 
 ## Testing Strategy
 

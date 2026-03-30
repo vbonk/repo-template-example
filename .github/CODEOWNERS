@@ -3,37 +3,35 @@
 #
 # Each line: pattern  owner(s)
 # Owners: @username, @org/team, or email
-#
-# === Uncomment and replace @your-username with your GitHub username ===
-#
+
 # Global default — all files
-# *                              @your-username
-#
+*                              @vbonk
+
 # CI/CD — workflow and action changes
-# .github/                       @your-username
-#
+.github/                       @vbonk
+
 # Documentation
-# *.md                           @your-username
-# docs/                          @your-username
-#
+*.md                           @vbonk
+docs/                          @vbonk
+
 # Security-sensitive files
-# .github/workflows/             @your-username
-# SECURITY.md                    @your-username
-#
+.github/workflows/             @vbonk
+SECURITY.md                    @vbonk
+
 # AI agent configuration — PROMPT INJECTION DEFENSE
 # Changes to these files modify how AI agents behave in your repo.
 # Require owner review to prevent prompt injection via PRs.
-# CLAUDE.md                      @your-username
-# AGENTS.md                      @your-username
-# GEMINI.md                      @your-username
-# .cursorrules                   @your-username
-# .windsurfrules                 @your-username
-# .github/copilot-instructions.md @your-username
-#
+CLAUDE.md                      @vbonk
+AGENTS.md                      @vbonk
+GEMINI.md                      @vbonk
+.cursorrules                   @vbonk
+.windsurfrules                 @vbonk
+.github/copilot-instructions.md @vbonk
+
 # Security hardening files — SECRET SCANNING DEFENSE
 # Changes to these files weaken security protections.
 # Require owner review to prevent security downgrades via PRs.
-# scripts/secure-repo.sh           @your-username
-# templates/hooks/                 @your-username
-# .github/workflows/secret-scan-pr.yml @your-username
-# .gitattributes                   @your-username
+scripts/secure-repo.sh           @vbonk
+templates/hooks/                 @vbonk
+.github/workflows/secret-scan-pr.yml @vbonk
+.gitattributes                   @vbonk

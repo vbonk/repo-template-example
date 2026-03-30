@@ -8,9 +8,7 @@ We pledge to make participation in our project a welcoming experience for everyo
 
 ## Enforcement
 
-<!-- TODO: Add your enforcement email -->
-
-Instances of unacceptable behavior may be reported to the project maintainers.
+Instances of unacceptable behavior may be reported to the project maintainers at **conduct@example.com**.
 
 ## Attribution
 

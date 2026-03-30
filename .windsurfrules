@@ -2,10 +2,9 @@
 # https://docs.codeium.com/windsurf/memories#windsurfrules
 
 # Project Context
-# TODO: Replace with your project details
-# Project: <project-name>
-# Stack: <your-stack>
-# Description: <brief-description>
+# Project: task-api
+# Stack: TypeScript, Node.js 22, Express 5, PostgreSQL 17, Redis 7
+# Description: REST API for task management with authentication and real-time updates
 
 # Code Style
 - Follow existing patterns in the codebase
@@ -13,11 +12,14 @@
 - Prefer explicit over implicit
 - Use descriptive variable names — no single-letter names except loop counters
 - Write self-documenting code; add comments only for "why", not "what"
+- Use Zod for request validation
+- Use async/await throughout (Express 5 supports async middleware)
 
 # Architecture
 - Respect the existing directory structure
 - Do not create new top-level directories without discussion
 - Keep imports organized and consistent with project conventions
+- Routes in src/routes/, middleware in src/middleware/, models in src/models/, services in src/services/
 
 # Testing
 - Write tests alongside new functionality

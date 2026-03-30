@@ -2,25 +2,22 @@
 
 > Instructions for Google Gemini CLI when working in this repository.
 
-## Quick Start
-
-**New repo from template?** Update this file with your project details.
-
 ## Project
 
-**Name:** <!-- TODO: Replace with project name -->
-**Stack:** <!-- TODO: e.g., TypeScript, Node.js, React -->
+**Name:** task-api
+**Stack:** TypeScript, Node.js 22, Express 5, PostgreSQL 17, Redis 7
+
+REST API for task management with authentication and real-time updates.
 
 ## Commands
 
 ```bash
-npm run dev       # Start dev server
-npm run build     # Production build
-npm test          # Run tests
-npm run lint      # Lint code
+npm run dev       # Start dev server (tsx watch)
+npm run build     # Compile TypeScript to dist/
+npm test          # Run tests (vitest)
+npm run lint      # Lint code (eslint)
+npm start         # Run production build
 ```
-
-> Adapt to your stack: Python (pytest, ruff), Go (go test), etc.
 
 ## Code Style
 
@@ -28,6 +25,8 @@ npm run lint      # Lint code
 - Keep functions small and focused
 - Prefer explicit over implicit
 - Write self-documenting code with comments for "why", not "what"
+- Use Zod for request validation
+- Use async/await throughout
 
 ## Workflow
 
@@ -40,11 +39,35 @@ npm run lint      # Lint code
 ## Project Structure
 
 ```
-src/      # Source code
-tests/    # Test files
-docs/     # Documentation
-scripts/  # Automation
+src/
+  index.ts          # Express server entry point
+  routes/           # Route handlers (tasks, auth, health)
+  middleware/        # Auth, validation, error handling
+  models/           # Database models and queries
+  services/         # Business logic layer
+tests/              # Test files (unit + integration)
+docs/               # Documentation
+scripts/            # Automation
 ```
+
+## Key Decisions
+
+| Decision | Rationale |
+|----------|-----------|
+| PostgreSQL over MongoDB | Relational data, strong consistency |
+| REST over GraphQL | Simpler client requirements |
+| Express 5 | Async middleware support, ecosystem |
+| Redis | Low-latency caching, session storage |
+
+## Environment Variables
+
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `DATABASE_URL` | Yes | PostgreSQL connection string |
+| `REDIS_URL` | Yes | Redis connection string |
+| `JWT_SECRET` | Yes | JWT token signing secret |
+| `PORT` | No | Server port (default: 3000) |
+| `NODE_ENV` | No | `development` / `production` |
 
 ## Security
 

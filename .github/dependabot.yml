@@ -15,76 +15,26 @@ updates:
       prefix: "ci"
       include: "scope"
 
-  # ============================================
-  # TEMPLATE: Uncomment the section for your stack
-  # ============================================
-
-  # --- npm (JavaScript/TypeScript) ---
-  # - package-ecosystem: "npm"
-  #   directory: "/"
-  #   schedule:
-  #     interval: "weekly"
-  #     day: "monday"
-  #   open-pull-requests-limit: 10
-  #   commit-message:
-  #     prefix: "deps"
-  #     prefix-development: "deps-dev"
-  #     include: "scope"
-  #   groups:
-  #     # Group minor/patch updates to reduce PR noise
-  #     production-dependencies:
-  #       dependency-type: "production"
-  #       update-types:
-  #         - "minor"
-  #         - "patch"
-  #     development-dependencies:
-  #       dependency-type: "development"
-  #       update-types:
-  #         - "minor"
-  #         - "patch"
-
-  # --- pip (Python) ---
-  # - package-ecosystem: "pip"
-  #   directory: "/"
-  #   schedule:
-  #     interval: "weekly"
-  #     day: "monday"
-  #   open-pull-requests-limit: 10
-  #   commit-message:
-  #     prefix: "deps"
-  #     include: "scope"
-
-  # --- gomod (Go) ---
-  # - package-ecosystem: "gomod"
-  #   directory: "/"
-  #   schedule:
-  #     interval: "weekly"
-  #     day: "monday"
-  #   open-pull-requests-limit: 10
-  #   commit-message:
-  #     prefix: "deps"
-  #     include: "scope"
-
-  # --- bun (Bun uses npm ecosystem) ---
-  # Note: Bun uses bun.lockb but Dependabot reads package.json.
-  # Use the npm ecosystem for Bun projects.
-  # - package-ecosystem: "npm"
-  #   directory: "/"
-  #   schedule:
-  #     interval: "weekly"
-  #     day: "monday"
-  #   open-pull-requests-limit: 10
-  #   commit-message:
-  #     prefix: "deps"
-  #     include: "scope"
-
-  # --- cargo (Rust) ---
-  # - package-ecosystem: "cargo"
-  #   directory: "/"
-  #   schedule:
-  #     interval: "weekly"
-  #     day: "monday"
-  #   open-pull-requests-limit: 10
-  #   commit-message:
-  #     prefix: "deps"
-  #     include: "scope"
+  # npm (TypeScript/Node.js)
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 10
+    commit-message:
+      prefix: "deps"
+      prefix-development: "deps-dev"
+      include: "scope"
+    groups:
+      # Group minor/patch updates to reduce PR noise
+      production-dependencies:
+        dependency-type: "production"
+        update-types:
+          - "minor"
+          - "patch"
+      development-dependencies:
+        dependency-type: "development"
+        update-types:
+          - "minor"
+          - "patch"

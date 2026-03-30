@@ -1,26 +1,17 @@
 {
-  "name": "Development Container",
+  "name": "task-api Development Container",
   "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
   "features": {
-    "ghcr.io/devcontainers/features/github-cli:1": {}
-    // === Uncomment for your stack ===
-    // "ghcr.io/devcontainers/features/node:1": { "version": "22" }        // Node.js
-    // "ghcr.io/devcontainers/features/python:1": { "version": "3.12" }    // Python
-    // "ghcr.io/devcontainers/features/go:1": { "version": "1.22" }        // Go
-    // "ghcr.io/devcontainers/features/rust:1": { "version": "latest" }    // Rust
+    "ghcr.io/devcontainers/features/github-cli:1": {},
+    "ghcr.io/devcontainers/features/node:1": { "version": "22" }
   },
   "customizations": {
     "vscode": {
       "extensions": [
         "editorconfig.editorconfig",
-        "github.copilot"
-        // === Uncomment for your stack ===
-        // "dbaeumer.vscode-eslint",        // Node.js/TypeScript
-        // "esbenp.prettier-vscode",        // Node.js/TypeScript
-        // "ms-python.python",              // Python
-        // "charliermarsh.ruff",            // Python (Ruff linter)
-        // "golang.go",                     // Go
-        // "rust-lang.rust-analyzer"        // Rust
+        "github.copilot",
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode"
       ],
       "settings": {
         "editor.formatOnSave": true,
@@ -32,10 +23,5 @@
       "openFiles": ["README.md", "CLAUDE.md"]
     }
   },
-  "postCreateCommand": "echo 'Development container ready. Run your project setup commands.'"
-  // === Uncomment for your stack ===
-  // "postCreateCommand": "npm install"                          // Node.js
-  // "postCreateCommand": "pip install -r requirements.txt"      // Python
-  // "postCreateCommand": "go mod download"                      // Go
-  // "postCreateCommand": "cargo build"                          // Rust
+  "postCreateCommand": "npm install"
 }
