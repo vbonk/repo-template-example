@@ -1,7 +1,7 @@
 {
   "name": "task-api",
-  "version": "0.1.0",
-  "description": "Task-management REST API with zero runtime dependencies — the living example for vbonk/repo-template v2.0.0",
+  "version": "0.1.1",
+  "description": "Task-management REST API with zero runtime dependencies \u2014 the living example for vbonk/repo-template v2.0.0",
   "type": "module",
   "private": true,
   "main": "dist/index.js",
