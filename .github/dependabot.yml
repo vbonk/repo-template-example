@@ -43,31 +43,31 @@ updates:
   # ============================================
 
   # --- npm (JavaScript/TypeScript) ---
-  # - package-ecosystem: "npm"
-  #   directory: "/"
-  #   schedule:
-  #     interval: "weekly"
-  #     day: "monday"
-  #   open-pull-requests-limit: 10
-  #   cooldown:
-  #     default-days: 3
-  #   commit-message:
-  #     prefix: "deps"
-  #     prefix-development: "deps-dev"  # Distinguishes devDependency updates
-  #     include: "scope"
-  #   groups:
-  #     # Why groups: Without this, updating 10 packages = 10 separate PRs.
-  #     # Grouping minor/patch updates into one PR reduces noise significantly.
-  #     production-dependencies:
-  #       dependency-type: "production"
-  #       update-types:
-  #         - "minor"        # New features, backward-compatible
-  #         - "patch"        # Bug fixes, backward-compatible
-  #     development-dependencies:
-  #       dependency-type: "development"
-  #       update-types:
-  #         - "minor"
-  #         - "patch"
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 10
+    cooldown:
+      default-days: 3
+    commit-message:
+      prefix: "deps"
+      prefix-development: "deps-dev"  # Distinguishes devDependency updates
+      include: "scope"
+    groups:
+      # Why groups: Without this, updating 10 packages = 10 separate PRs.
+      # Grouping minor/patch updates into one PR reduces noise significantly.
+      production-dependencies:
+        dependency-type: "production"
+        update-types:
+          - "minor"        # New features, backward-compatible
+          - "patch"        # Bug fixes, backward-compatible
+      development-dependencies:
+        dependency-type: "development"
+        update-types:
+          - "minor"
+          - "patch"
 
   # --- pip (Python) ---
   # - package-ecosystem: "pip"

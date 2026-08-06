@@ -1,29 +1,27 @@
 # CLAUDE.md
 
-<!-- This file provides context for Claude Code (claude.ai/code).
-     Keep it under 150 lines. See Anthropic's best practices:
-     https://www.anthropic.com/engineering/claude-code-best-practices -->
-
 > Instructions for Claude Code when working in this repository.
 
 ## Quick Start
 
-**New repo from template?** Run `/project:init-template` to customize interactively.
+```bash
+npm ci && npm run dev   # API on http://localhost:3000
+```
 
 ## Project
 
-**Name:** <!-- TODO: Replace with project name -->
-**Stack:** <!-- TODO: e.g., TypeScript, Node.js, React -->
-**Description:** <!-- TODO: Brief description -->
+**Name:** task-api (repo-template-example)
+**Stack:** TypeScript (strict, ESM), Node.js 22, node:http, Vitest, ESLint
+**Description:** Small task-management REST API with zero runtime dependencies — the living example repo for [vbonk/repo-template](https://github.com/vbonk/repo-template) v2.0.0. The app is deliberately minimal; the repository engineering around it is the point.
 
 ## Architecture
 
-<!-- TODO: Replace with your system's architecture -->
 ```mermaid
 graph TD
-    A[Client] --> B[API Server]
-    B --> C[Database]
-    B --> D[Cache]
+    A[HTTP Client] --> B["node:http server (src/server.ts)"]
+    B --> C["Router (src/router.ts)"]
+    C --> D["Validation (src/validation.ts)"]
+    C --> E["TaskStore — in-memory Map (src/store.ts)"]
 ```
 
 See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for full details and ADRs.
@@ -31,21 +29,21 @@ See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for full details and ADRs.
 ## Commands
 
 ```bash
-npm run dev       # Start dev server
-npm run build     # Production build
-npm test          # Run tests
-npm run lint      # Lint code
+npm run dev       # Start dev server with live reload (tsx)
+npm run build     # Compile TypeScript to dist/
+npm start         # Run compiled build
+npm test          # Vitest + V8 coverage (80% thresholds enforced)
+npm run lint      # ESLint flat config with typescript-eslint
+npm run typecheck # tsc --noEmit over src and tests
 ```
-
-> Adapt to your stack: Python (pytest, ruff), Go (go test), Rust (cargo test), etc.
 
 ## Project Structure
 
 ```
-src/      # Source code
-tests/    # Test files
+src/      # types, errors, validation, store, router, server, index
+tests/    # unit/ (store, validation) + integration/ (real HTTP)
 docs/     # Documentation (ARCHITECTURE.md, ADRs, AI-SECURITY.md)
-scripts/  # Automation (labels, tasks, issue management)
+scripts/  # Automation (labels, tasks, issue management, security)
 ```
 
 ## Code Style
@@ -53,59 +51,57 @@ scripts/  # Automation (labels, tasks, issue management)
 - Follow existing patterns in the codebase
 - Keep functions small and focused
 - Prefer explicit over implicit
+- ESM imports use explicit `.js` extensions (NodeNext resolution)
 
 ## Key Decisions
 
-<!-- TODO: Document important architectural decisions here -->
-
 | Decision | Rationale |
 |----------|-----------|
-| <!-- e.g., PostgreSQL over MongoDB --> | <!-- e.g., Relational data, strong consistency --> |
-| <!-- e.g., REST over GraphQL --> | <!-- e.g., Simpler client requirements --> |
+| Zero runtime dependencies (`node:http`, no framework) | Minimal supply-chain surface; nothing for Dependabot to patch at runtime; the example stays legible |
+| In-memory `Map` store, no database | Example scope — tests run anywhere with no services; data loss on restart is documented and accepted |
+| Structured `ApiError` with per-field validation issues | Callers get machine-readable errors; no stringly-typed error handling |
 
-See [docs/decisions/](docs/decisions/) for detailed ADRs.
+See [docs/decisions/](docs/decisions/) for detailed ADRs — especially [ADR-006](docs/decisions/006-zero-runtime-dependencies.md) (this project's stack) and ADRs 001–005 inherited from the template.
 
 ## Environment Variables
-
-<!-- TODO: Document required environment variables -->
 
 | Variable | Required | Description |
 |----------|----------|-------------|
 | `NODE_ENV` | No | `development` / `production` |
-| <!-- `DATABASE_URL` --> | <!-- Yes --> | <!-- PostgreSQL connection string --> |
-| <!-- `API_KEY` --> | <!-- Yes --> | <!-- External API key --> |
+| `PORT` | No | HTTP port (default `3000`) |
+| `HOST` | No | Bind address (default `127.0.0.1`) |
 
 See `.env.example` for the full list. Never commit `.env` files.
 
 ## Testing Strategy
 
 - **Unit tests:** `tests/unit/` — fast, isolated, mock external deps
-- **Integration tests:** `tests/integration/` — test component interactions
-- **Run before committing:** `npm test` (or equivalent)
+- **Integration tests:** `tests/integration/` — real HTTP requests against a server on an ephemeral port
+- **Run before committing:** `npm test` (coverage thresholds: 80% lines/branches/functions/statements)
 - Aim for meaningful coverage, not just line coverage
 - Test edge cases and error paths
 
 ## Deployment
 
-<!-- TODO: Describe your deployment target and process -->
+This example repo is not deployed anywhere. Releases are cut by pushing a `v*` tag: the release workflow drafts the release, signs artifacts with Sigstore, attaches an SBOM, and only then publishes.
 
 | Environment | URL | Deploys From |
 |-------------|-----|--------------|
-| Production | <!-- TODO --> | `main` branch |
-| Staging | <!-- TODO --> | `develop` branch |
+| GitHub Releases | https://github.com/vbonk/repo-template-example/releases | `v*` tags |
 
 ## Error Handling
 
-- Use structured error types, not raw strings
-- Log errors with context (request ID, user, operation)
+- Use structured error types (`ApiError` in `src/errors.ts`), not raw strings
+- Validation failures carry per-field issues in `error.details`
 - Never swallow errors silently — handle or propagate
-- Return meaningful error messages to callers
+- Unknown errors surface as `500` with a generic body; details go to server logs only
 
 ## Dependencies
 
+- **Runtime: none.** All dependencies are dev-only (TypeScript, Vitest, ESLint, tsx)
 - Pin major versions in lockfiles
-- Review Dependabot PRs weekly
-- Audit with `npm audit` / `pip audit` / `govulncheck` before releases
+- Review Dependabot PRs weekly (npm + github-actions ecosystems, 3-day cooldown)
+- Audit with `npm audit` before releases
 
 ## Workflow
 
@@ -153,7 +149,7 @@ Run `/project:security-audit` for a full scorecard anytime.
 
 ## Custom Commands
 
-- `/project:init-template` — Initialize this template for your project
+- `/project:init-template` — Initialize this template for your project (already done here)
 - `/project:security-audit` — Run security scorecard (GitHub settings + local protections)
 - `/project:review` — Code review assistance
 

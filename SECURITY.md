@@ -48,7 +48,7 @@ flowchart TD
 > **Do NOT create a public GitHub issue** for security vulnerabilities. Use private reporting to protect users while a fix is developed.
 
 1. Use [GitHub's private vulnerability reporting](https://docs.github.com/en/code-security/security-advisories/guidance-on-reporting-and-writing-information-about-vulnerabilities/privately-reporting-a-security-vulnerability) (preferred)
-2. Or email: <!-- TODO: Add your security contact email -->
+2. If private reporting is unavailable to you, contact the maintainer ([@vbonk](https://github.com/vbonk)) through GitHub — do **not** describe the vulnerability in a public issue
 
 ### What to Include
 
@@ -72,12 +72,11 @@ flowchart TD
 
 ## Supported Versions
 
-<!-- TODO: Update with your version support policy -->
+This is an example repository (pre-1.0). Only the latest release receives fixes.
 
 | Version | Supported |
 |---------|-----------|
-| Latest | Yes |
-| Previous major | Security fixes only |
+| Latest release | Yes |
 | Older | No |
 
 ## 🔐 Security Best Practices

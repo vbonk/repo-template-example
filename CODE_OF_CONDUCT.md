@@ -8,9 +8,7 @@ We pledge to make participation in our project a welcoming experience for everyo
 
 ## Enforcement
 
-<!-- TODO: Add your enforcement email -->
-
-Instances of unacceptable behavior may be reported to the project maintainers.
+Instances of unacceptable behavior may be reported to the maintainer, [@vbonk](https://github.com/vbonk), by opening an issue (for non-sensitive matters) or via [GitHub's private vulnerability reporting](https://github.com/vbonk/repo-template-example/security) channel for anything that shouldn't be public. Reports are reviewed and investigated promptly and fairly.
 
 ## Attribution
 

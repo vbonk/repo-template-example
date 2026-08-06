@@ -9,7 +9,7 @@ Thank you for your interest in contributing!
 | Step | Command / Link |
 |------|---------------|
 | Fork | Click **Fork** on the repo page |
-| Clone | `git clone https://github.com/YOUR_USERNAME/REPO_NAME.git` |
+| Clone | `git clone https://github.com/YOUR_USERNAME/repo-template-example.git` |
 | Branch | `git checkout -b feature/your-feature` |
 | Commit | `git commit -m "feat: describe your change"` |
 | Push | `git push origin feature/your-feature` |
@@ -50,13 +50,11 @@ flowchart LR
 
 ```bash
 # Clone the repository
-git clone https://github.com/YOUR_USERNAME/REPO_NAME.git
-cd REPO_NAME
+git clone https://github.com/YOUR_USERNAME/repo-template-example.git
+cd repo-template-example
 
-# Install dependencies (adapt to your stack)
-npm install        # Node.js
-pip install -r requirements.txt  # Python
-go mod download    # Go
+# Install dependencies (Node.js 22+, see .nvmrc)
+npm ci
 ```
 
 ### Making Changes
@@ -69,17 +67,12 @@ go mod download    # Go
 ### Running Tests
 
 ```bash
-# Template validation (89 checks across 4 layers)
-bash scripts/test-template.sh
-
-# Local-only mode (skips GitHub-dependent checks — no gh CLI needed)
-bash scripts/test-template.sh --local-only
-
-# Your project's tests (adapt to your stack)
-npm test           # Node.js
-pytest             # Python
-go test ./...      # Go
+npm test           # Vitest with V8 coverage — 80% thresholds enforced
+npm run lint       # ESLint (flat config, typescript-eslint)
+npm run typecheck  # tsc --noEmit over src and tests
 ```
+
+All three run in CI on every push and PR; they must pass before merge.
 
 ### Commit Messages
 

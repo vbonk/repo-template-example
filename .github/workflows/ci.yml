@@ -64,23 +64,26 @@ jobs:
       # What: Installs dependencies, checks code style, runs tests, builds.
       # Why each step: Lint catches style/quality issues. Test catches bugs.
       # Build confirms your code compiles. All three must pass before merge.
-      # - name: Setup Node.js
-      #   uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
-      #   with:
-      #     node-version: 'lts/*'    # Uses latest long-term-support version
-      #     cache: 'npm'             # Caches node_modules between runs (faster CI)
-      #
-      # - name: Install dependencies
-      #   run: npm ci                # "ci" = clean install from lockfile (reproducible)
-      #
-      # - name: Lint
-      #   run: npm run lint          # Catches code style and quality issues
-      #
-      # - name: Test
-      #   run: npm test              # Runs your test suite
-      #
-      # - name: Build
-      #   run: npm run build         # Confirms production build succeeds
+      - name: Setup Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 'lts/*'    # Uses latest long-term-support version
+          cache: 'npm'             # Caches node_modules between runs (faster CI)
+
+      - name: Install dependencies
+        run: npm ci                # "ci" = clean install from lockfile (reproducible)
+
+      - name: Lint
+        run: npm run lint          # Catches code style and quality issues
+
+      - name: Typecheck
+        run: npm run typecheck     # tsc --noEmit over src and tests
+
+      - name: Test
+        run: npm test              # Vitest + coverage (80% thresholds enforced)
+
+      - name: Build
+        run: npm run build         # Confirms production build succeeds
 
       # --- Python ---
       # What: Installs dependencies, lints with Ruff, runs tests with pytest.
@@ -160,12 +163,6 @@ jobs:
       # - name: Build
       #   run: bun run build
 
-      # --- Generic (placeholder — delete this once you uncomment a section above) ---
-      - name: Placeholder
-        run: |
-          echo "CI workflow running"
-          echo "Configure this workflow for your tech stack"
-          echo "See comments above for Node.js, Python, Go, Rust, and Bun examples"
 
   # ============================================
   # TEMPLATE: Multi-OS matrix example

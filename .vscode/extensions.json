@@ -1,12 +1,6 @@
 {
   "recommendations": [
-    "editorconfig.editorconfig"
-    // === Uncomment for your stack ===
-    // "dbaeumer.vscode-eslint",        // Node.js/TypeScript
-    // "esbenp.prettier-vscode",        // Node.js/TypeScript
-    // "ms-python.python",              // Python
-    // "charliermarsh.ruff",            // Python (Ruff linter)
-    // "golang.go",                     // Go
-    // "rust-lang.rust-analyzer"        // Rust
+    "editorconfig.editorconfig",
+    "dbaeumer.vscode-eslint" // Node.js/TypeScript
   ]
 }
