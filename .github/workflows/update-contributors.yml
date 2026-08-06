@@ -1,0 +1,71 @@
+name: Update Contributors
+
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - 'CONTRIBUTORS.md'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: contributors-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+
+      - name: Update contributors list
+        run: |
+          # Replace content between marker comments in CONTRIBUTORS.md
+          awk '
+            /<!-- CONTRIBUTORS-START -->/ {
+              print
+              print ""
+              system("git log --format='"'"'%aN'"'"' | sort -uf | while IFS= read -r name; do [ -n \"$name\" ] && echo \"- **${name}**\"; done")
+              print ""
+              skip=1
+              next
+            }
+            /<!-- CONTRIBUTORS-END -->/ {
+              skip=0
+              print
+              next
+            }
+            !skip { print }
+          ' CONTRIBUTORS.md > CONTRIBUTORS.md.tmp
+          mv CONTRIBUTORS.md.tmp CONTRIBUTORS.md
+
+      # Opens a PR instead of pushing to main: main requires passing status
+      # checks, so direct pushes from workflows are rejected by the ruleset.
+      - name: Open PR with contributor updates
+        run: |
+          if git diff --quiet CONTRIBUTORS.md; then
+            echo "No contributor changes."
+            exit 0
+          fi
+          BRANCH="bot/update-contributors-$(date +%Y%m%d%H%M%S)"
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git checkout -b "$BRANCH"
+          git add CONTRIBUTORS.md
+          git commit -m 'docs: update contributors list'
+          git push origin "$BRANCH"
+          gh pr create --base main --head "$BRANCH" \
+            --title 'docs: update contributors list' \
+            --body 'Automated contributor list refresh from git history.'
+          gh pr merge --auto --squash "$BRANCH" || \
+            echo "::warning::Auto-merge not armed (enable allow_auto_merge + required checks); merge the PR manually."

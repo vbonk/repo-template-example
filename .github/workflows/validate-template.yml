@@ -1,0 +1,147 @@
+# Template Validation (Meta-CI)
+# Validates the template's own files: YAML, JSON, shell scripts, SHA pins, secrets.
+# Remove this workflow after initializing from the template.
+
+name: Validate Template
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Validate YAML files
+        run: |
+          echo "--- Validating YAML files ---"
+          # Probe the validator first: missing pyyaml must fail loudly as
+          # "validator unavailable", never masquerade as N invalid files.
+          if ! python3 -c "import yaml" 2>/dev/null; then
+            echo "::error::pyyaml not available — YAML validation cannot run (this is a hard failure, not a pass)"
+            exit 1
+          fi
+          ERRORS=0
+          for f in $(find . -name '*.yml' -o -name '*.yaml' | grep -v node_modules | sort); do
+            if python3 -c "import sys, yaml; yaml.safe_load(open(sys.argv[1]))" "$f" 2>/dev/null; then
+              echo "OK: $f"
+            else
+              echo "FAIL: $f"
+              ERRORS=$((ERRORS + 1))
+            fi
+          done
+          if [ "$ERRORS" -gt 0 ]; then
+            echo "::error::$ERRORS YAML file(s) failed validation"
+            exit 1
+          fi
+
+      - name: Validate JSON files
+        run: |
+          echo "--- Validating JSON files ---"
+          # Uses scripts/validate-jsonc.py which strips // and /* */ comments before
+          # parsing, so devcontainer.json and .vscode/*.json template files with
+          # instructional comments are treated as valid JSONC.
+          FILES=$(find . -name '*.json' | grep -v node_modules | sort | tr '\n' ' ')
+          # shellcheck disable=SC2086
+          python3 scripts/validate-jsonc.py $FILES || {
+            echo "::error::One or more JSON file(s) failed validation"
+            exit 1
+          }
+
+      - name: ShellCheck scripts
+        run: |
+          echo "--- Running ShellCheck ---"
+          if ! command -v shellcheck &>/dev/null; then
+            sudo apt-get update -qq && sudo apt-get install -qq -y shellcheck
+          fi
+          ERRORS=0
+          for f in $(find . -name '*.sh' | grep -v node_modules | sort); do
+            if shellcheck "$f"; then
+              echo "OK: $f"
+            else
+              echo "FAIL: $f"
+              ERRORS=$((ERRORS + 1))
+            fi
+          done
+          if [ "$ERRORS" -gt 0 ]; then
+            echo "::error::$ERRORS script(s) failed ShellCheck"
+            exit 1
+          fi
+
+      - name: Verify all actions are SHA-pinned
+        run: |
+          echo "--- Checking SHA-pinned actions ---"
+          # Anchored check: EVERY active step-key `uses:` ref must end in a
+          # 40-hex SHA. The old grep-for-@vN approach missed `@main` entirely
+          # and dropped any line containing '#' — so `@v4 # v4` escaped too.
+          UNPINNED=0
+          while IFS= read -r line; do
+            case "$(echo "$line" | sed 's/^[[:space:]]*//')" in \#*) continue ;; esac
+            REF=$(echo "$line" | sed -E 's/.*uses:[[:space:]]*//; s/[[:space:]]*#.*$//; s/["'"'"']//g')
+            case "$REF" in ./*|docker://*) continue ;; esac
+            if ! echo "$REF" | grep -qE '@[0-9a-f]{40}$'; then
+              echo "::error::Not SHA-pinned: $REF"
+              UNPINNED=$((UNPINNED + 1))
+            fi
+          done < <(grep -rhE '^[[:space:]]*(-[[:space:]]+)?uses:[[:space:]]' .github/workflows/)
+          if [ "$UNPINNED" -gt 0 ]; then
+            exit 1
+          fi
+          echo "All actions are SHA-pinned (anchored check)."
+
+      - name: ShellCheck hook templates
+        run: |
+          echo "--- ShellCheck on .sh.template files ---"
+          ERRORS=0
+          for f in $(find . -name '*.sh.template' | grep -v node_modules | sort); do
+            if shellcheck "$f"; then
+              echo "OK: $f"
+            else
+              echo "FAIL: $f"
+              ERRORS=$((ERRORS + 1))
+            fi
+          done
+          if [ "$ERRORS" -gt 0 ]; then
+            echo "::error::$ERRORS template(s) failed ShellCheck"
+            exit 1
+          fi
+          echo "All hook templates pass ShellCheck."
+
+      - name: Verify security files exist
+        run: |
+          echo "--- Checking security files ---"
+          MISSING=0
+          for f in .gitattributes scripts/secure-repo.sh templates/hooks/pre-commit-secrets.sh.template templates/hooks/setup-hooks.sh docs/FORK-SECURITY.md; do
+            if [ -f "$f" ]; then
+              echo "OK: $f"
+            else
+              echo "MISSING: $f"
+              MISSING=$((MISSING + 1))
+            fi
+          done
+          if [ "$MISSING" -gt 0 ]; then
+            echo "::error::$MISSING security file(s) missing"
+            exit 1
+          fi
+
+      - name: Check for secrets patterns
+        run: |
+          echo "--- Scanning for secrets patterns ---"
+          PATTERNS='(AKIA[0-9A-Z]{16}|ghp_[a-zA-Z0-9]{36}|sk-[a-zA-Z0-9]{48}|-----BEGIN (RSA |EC )?PRIVATE KEY)'
+          MATCHES=$(grep -rEn "$PATTERNS" --include='*.yml' --include='*.yaml' --include='*.json' --include='*.sh' --include='*.md' . || true)
+          if [ -n "$MATCHES" ]; then
+            echo "::error::Possible secrets detected:"
+            echo "$MATCHES"
+            exit 1
+          fi
+          echo "No secrets patterns found."
